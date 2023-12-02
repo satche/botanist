@@ -1,2 +1,2 @@
-# botanist
-An academical projet to recognizie and classify writings from botanists
+# Botanist
+An academical projet to recognise and classify writings from botanists
