@@ -23,33 +23,49 @@ TODO:
 
 ## 1. Context
 
-The University of Neuchatel has a large database of handwritten documents. Thoses docuemnts are notes taken by botanists during their field trips. The goal of this project is to create a machine learning model that would be able to predict if a specific handwriting belongs to a specific botanist.
+The University of Neuchatel maintains an extensive collection of handwritten documents, primarily composed of field notes from botanists. The objective of this project is to develop a machine learning model capable of accurately identifying the authorship of these notes based on unique handwriting characteristics.
+
+This project is undertaken as part of the 'Machine Learning and Big Data' course in the MSE formation at HES-SO.
 
 ## 2. Database description
 
-We have two datasets. The first one is the public dataset. It regroups pre-processed images of handwritten documents. Inside, folders contains different types of images: paragraphes, lines, sentences and words. The images are already cropped and in binary format (black and white). Each group has a metadata text file associated.
+We are working with two distinct datasets. The first, a public dataset, comprises pre-processed images of handwritten documents. These images, categorized into folders, include various types such as paragraphs, lines, sentences, and words. They have been pre-cropped and converted into a binary format (black and white), with each category accompanied by an associated metadata text file. However, it is important to note that the images are not all the same size.
 
-The second one is the Neuchâtel dataset. It regroups scanned images of documents, that contains handwritten and typed text. The images are raw: different sizem, uncropped and in color. The files are regrouped in folders by botanist: "Chaillet", "Douteux" and "Other botanists".
+The second dataset, known as the Neuchâtel dataset, consists of scanned document containing image, annotations, handwritten and typed text. These images are in their raw form: varying in size, uncropped, and in full color. The files are organized into folders by the botanist's name, including 'Chaillet', 'Douteux', and 'Other botanists'.
 
-TODO: add screenshot
+Below are two typical image examples from the Neuchâtel dataset:
+
+![Alt text](<assets/data-neuchatel-1.png>)
+
+![Alt text](<assets/data-neuchatel-2.png>)
 
 ## 3. Data pre-processing & feature extraction
 
-TODO: Thomas
-
-With Neuchâtel dataset, we have to pre-process the images so they are close to the public dataset. We have to crop them, convert them to black and white and resize them to the same size as the public dataset. We could do that by hand, but we chose a more academic approach. We decided to use [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR) to detect written text in the images and crop them. We then use [OpenCV](https://opencv.org/) to convert them to black and white and resize them.
-
-Unfortunately, PaddleOCR is not able to differentiate handwritten text from typed text.
+The initial step involves normalizing the data from both the public and Neuchâtel datasets. Our aim is to ensure the writings are as similar as possible, thereby eliminating any bias and facilitating the extraction of pertinent features. We will commence with the Neuchâtel dataset, given its raw and unprocessed nature.
 
 ### OCR
 
-TODO: Thomas
+Our initial task is to distinguish the handwritten text from the printed one.
+
+While this could be done manually, we have opted for a more academic approach. We've chose to use [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR) to identify and crop the handwritten text within the images. Prior to saving the results, a pre-processing step is necessary. We've used [OpenCV](https://opencv.org/) to convert the images to black and white and resize them to a uniform height (in this case: 50px).
+
+Below are three cropped results from each of the previously displayed images from the Neuchâtel dataset:
+
+![Alt text](assets/crop_0.jpg) ![Alt text](assets/crop_1.jpg) ![Alt text](assets/crop_2.jpg)
+
+![Alt text](assets/crop_7.jpg) ![Alt text](assets/crop_8.jpg) ![Alt text](assets/crop_9.jpg)
 
 ### OCR CNN
 
 TODO: Dylan
 
-### data augmentation
+Unfortunately, PaddleOCR is not able to differentiate handwritten text from typed text. We tried to create another model to detect handwritten text vs printed one, but we decided to focus on the main goal of the project and do this part by hand.
+
+### Data pre-processing & augmentation
+
+We used a similar pre-processing approach for the public dataset. We resized the images to a uniform height (50px) and cropped them in the middle to a fixed width. This width was a parameter we could adjust to improve the model's performance, but value around 150px seems to work well. We didn't convert the images to black and white, as the dataset is already in this format.
+
+We then augmented the dataset by altering the images in various ways via the keras `ImageDataGenerator` class. This included rotating, shifting, and zooming the images. We also flipped the images horizontally and vertically. This was done to increase the number of images available for training, thereby improving the model's performance.
 
 ## 4. Machine Learning Techniques
 
