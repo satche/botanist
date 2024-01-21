@@ -32,9 +32,9 @@ The second dataset, known as the Neuchâtel dataset, consists of scanned documen
 
 Below are two typical image examples from the Neuchâtel dataset:
 
-![Alt text](<assets/data-neuchatel-1.png>)
+<img src="assets/data-neuchatel-1.png" alt="Alt text" style="zoom:50%;" />
 
-![Alt text](<assets/data-neuchatel-2.png>)
+<img src="assets/data-neuchatel-2.png" alt="Alt text" style="zoom: 50%;" />
 
 ## 3. Data pre-processing & feature extraction
 
@@ -64,8 +64,6 @@ We used a similar pre-processing approach for the public dataset. We resized the
 We then augmented the dataset by altering the images in various ways via the keras `ImageDataGenerator` class. This included rotating, shifting, and zooming the images. We also flipped the images horizontally and vertically. This was done to increase the number of images available for training, thereby improving the model's performance.
 
 ## 4. Machine Learning Techniques
-
-TODO: Eric
 
 We decided to have two different approaches to this problem: one using a CNN and one using an autoencoder.
 
@@ -148,9 +146,15 @@ kf = KFold(n_splits=5, shuffle=True, random_state=42)
 
 ## 5. Experiments and results
 
+### CNN experiments
+
 For the training part, we used a UMAP to reduce the dimensionalities so that we could visualize the data on a two-dimensional plane.
 This display then allows us to visualize the distinct separation of classes by the model. 
 We also implemented cross-validation (using a k-fold) to obtain a robust and stable evaluation. 
+
+We divided the dataset into 5 folds. Here we can see the result of the UMAP display at the end of the first fold.
+
+<img src="assets/umap_train_fold1.png" alt="umap_train_fold1" style="zoom:67%;" />
 
 
 
