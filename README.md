@@ -148,18 +148,41 @@ kf = KFold(n_splits=5, shuffle=True, random_state=42)
 
 ### CNN experiments
 
-For the training part, we used a UMAP to reduce the dimensionalities so that we could visualize the data on a two-dimensional plane.
-This display then allows us to visualize the distinct separation of classes by the model. 
-We also implemented cross-validation (using a k-fold) to obtain a robust and stable evaluation. 
+#### Train part
 
-We divided the dataset into 5 folds. Here we can see the result of the UMAP display at the end of the first fold.
+For the training part, we used a UMAP to reduce the dimensionalities so that we could visualize the data on a two-dimensional plane. This display then allows us to visualize the distinct separation of classes by the model. We also implemented cross-validation (using a k-fold) to obtain a robust and stable evaluation and divided the dataset into 5 folds.
 
-<img src="assets/umap_train_fold1.png" alt="umap_train_fold1" style="zoom:67%;" />
+Here we can see the result of the UMAP display at the end of the fifth fold. We first tested two classes containing data from the public dataset only, and the model was able to distinguish and separate the two classes correctly.
+We then added two more classes containing data from the Neuchatel dataset, for a total of 4 classes tested. We can see that the model separates two classes very well, but has more difficulty for the remaining two classes (which tend to form a more dispersed and splintered group of points). We believe that the 2 well-separated classes are those of the public dataset, while the other 2 classes belong to the neuchatel dataset. 
+
+![umap_train_fold5](assets/cnn_umap_train_fold5.png)
+
+#### Test part
+
+For the test part, we used a UMAP to evaluate the model's ability to predict on new data. We tested this by randomly comparing two of the 4 botanists (those with the most samples) and an 'Others' class containing samples from the remaining botanists (those without enough samples to form a class in their own right).
+We can see that, in contrast to training, performance is poorer when the model only uses data from the Neuchatel dataset. The model seems to succeed slightly in separating the 2 classes, but in a very dispersed manner, without succeeding in establishing clear clusters. 
+
+![umap_test](assets/cnn_umap_test.png)
+
+It is also possible to view the predicted classes with a confusion matrix, and here we see results correlated with the UMAP. The predictions are more or less 50/50, with an average f1-score of 0.5-0.6. 
+
+<img src="assets/cnn_confusion_matrix_test.png" alt="cnn_confusion_matrix_test" style="zoom: 50%;" />
+
+### Autoencoder experiments
+
+The results of the autoencoder approach are similar to those obtained with the CNN model. There is therefore no distinct improvement or degradation compared with the other approach. 
 
 
-
-*Experiments and results: describe the experiments and the results. Explain the reasoning behind those experiments, e.g., what are the hypothesis ? Use performance measures to evaluate them and explain the results*
 
 ## 6. Analyse et conclusions
 
-TODO: Dylan
+The main objective of this project was to create a classification model to recognise and group botanists' handwriting types from an image.
+First of all, we were able to automate some of the data extraction using OCR. Although we had tried to create another CNN model to recognise handwritten text from non-handwritten text, we decided to do this step manually in order to concentrate on the main model.
+
+We considered two approaches to creating the main model, using a CNN or an auto-encoder. In terms of performance, the 2 solutions are relatively similar, with the training stage showing very good results with data from the public dataset, whereas the model seems to have difficulty differentiating data from the Neuchatel dataset. Performance is less satisfactory when we test the model with new data. The model has difficulty recognising classes, and although the UMAP display shows a separation, it remains very scattered and does not produce clusters as accurately as we would like. 
+
+This can be explained by the fact that the botanists' handwriting in this dataset is very similar indeed, and it is very difficult even with the naked eye to differentiate one handwriting from another. In order to improve the performance of this model, the following points should be considered:
+* Increase the number of samples in the Neuchatel dataset, as some botanists only have 2-3 samples. It should be possible to collect more data.
+* Use fine tuning on the training model to adjust certain parameters so that it is better adapted to the type of data in the Neuchatel dataset.
+
+The solution developed as part of this project achieves very good results in classifying types of postings to the public dataset. However, it needs to be improved if it is to be fully effective on the writings of the botanists at Neuchatel. 
