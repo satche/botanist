@@ -49,11 +49,9 @@ Our initial task is to distinguish the handwritten text from the printed one.
 
 While this could be done manually, we have opted for a more academic approach. We've chose to use [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR) to identify and crop the handwritten text within the images. Prior to saving the results, a pre-processing step is necessary. We've used [OpenCV](https://opencv.org/) to convert the images to black and white and resize them to a uniform height (in this case: 50px).
 
-Below are three cropped results from each of the previously displayed images from the Neuchâtel dataset:
+Below is an example of a processed image, following by some output image examples.
 
-![Alt text](assets/crop_0.jpg) ![Alt text](assets/crop_1.jpg) ![Alt text](assets/crop_2.jpg)
-
-![Alt text](assets/crop_7.jpg) ![Alt text](assets/crop_8.jpg) ![Alt text](assets/crop_9.jpg)
+![Alt text](<assets/process.png>)
 
 ### OCR CNN
 
