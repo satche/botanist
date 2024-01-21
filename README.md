@@ -16,9 +16,6 @@
 
 TODO:
 
-- Augmenter le dataset neuchatel : Dylan
-- Tester avec dataset neuchatel : Eric + Thomas
-- code cleanup + marche à suivre : Eric
 - Présentation : Tous (<https://docs.google.com/presentation/d/1UJyt7ywg6fFq_mlWROCbzvzzPN0oVw38ch_AZ46q7xQ/edit?usp=sharing>)
 
 ## 1. Context
@@ -55,9 +52,10 @@ Below is an example of a processed image, following by some output image example
 
 ### OCR CNN
 
-TODO: Dylan
+Unfortunately, PaddleOCR is unable to differentiate between handwritten and typed text. In order to automate this task, one possibility is to create another model to detect handwriting from non-handwriting on an image. 
+An initial implementation of a CNN model has been carried out, but as it did not perform satisfactorily (f1-score between 0.5 and 0.6), it was decided to carry out this part by hand in order to concentrate fully on the project's main objective. So, while we can use OCR to identify and extract text from images, it is then necessary to manually sort processed images containing handwritten or non-handwritten text. 
 
-Unfortunately, PaddleOCR is not able to differentiate handwritten text from typed text. We tried to create another model to detect handwritten text vs printed one, but we decided to focus on the main goal of the project and do this part by hand.
+
 
 ### Data pre-processing & augmentation
 
@@ -77,7 +75,11 @@ TODO: Eric
 
 ## 5. Experiments and results
 
-TODO: Dylan
+For the training part, we used a UMAP to reduce the dimensionalities so that we could visualize the data on a two-dimensional plane.
+This display then allows us to visualize the distinct separation of classes by the model. 
+We also implemented cross-validation (using a k-fold) to obtain a robust and stable evaluation. 
+
+
 
 *Experiments and results: describe the experiments and the results. Explain the reasoning behind those experiments, e.g., what are the hypothesis ? Use performance measures to evaluate them and explain the results*
 
