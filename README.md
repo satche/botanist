@@ -67,11 +67,84 @@ We then augmented the dataset by altering the images in various ways via the ker
 
 TODO: Eric
 
+We decided to have two different approaches to this problem: one using a CNN and one using an autoencoder.
+
 ### CNN
+
+Our model started with a simple architecture with just some layers, just engough to do some first tests. We decided to improve it by using a dual-path structure with different filter sizes (3x3 and 5x5), enabling it to capture diverse features.
+
+We try to avoid overfitting throug L1/L2 regularization layers. After our max pooling layers, we merge the two paths then add dense and dropout layer with a value of 0.2.
+
+```python
+# Define modele
+input_layer = keras.layers.Input(shape=(IMAGE_HEIGHT, IMAGE_WIDTH, 1))
+
+# Define L1 and L2 regularization
+l1_l2 = keras.regularizers.l1_l2(l1=0, l2=1e-4)
+
+# path 1
+conv1_1 = keras.layers.Conv2D(32, (3, 3), activation='relu', padding='same', kernel_regularizer=l1_l2)(input_layer)
+pool1_1 = keras.layers.MaxPooling2D((2, 2))(conv1_1)
+conv1_2 = keras.layers.Conv2D(64, (3, 3), activation='relu', padding='same', kernel_regularizer=l1_l2)(pool1_1)
+pool1_2 = keras.layers.MaxPooling2D((2, 2))(conv1_2)
+
+# path 2
+conv2_1 = keras.layers.Conv2D(32, (5, 5), activation='relu', padding='same', kernel_regularizer=l1_l2)(input_layer)
+pool2_1 = keras.layers.MaxPooling2D((2, 2))(conv2_1)
+conv2_2 = keras.layers.Conv2D(64, (5, 5), activation='relu', padding='same', kernel_regularizer=l1_l2)(pool2_1)
+pool2_2 = keras.layers.MaxPooling2D((2, 2))(conv2_2)
+
+# merge paths
+merged = keras.layers.concatenate([pool1_2, pool2_2])
+
+flat = keras.layers.Flatten()(merged)
+dense1 = keras.layers.Dense(128, activation='relu', kernel_regularizer=l1_l2, name=FLATTEN_LAYER_NAME)(flat)
+dropout = keras.layers.Dropout(0.2)(dense1)  # Consider experimenting with the dropout rate
+output_layer = keras.layers.Dense(N_CLASSES, activation='softmax')(dropout)
+
+model = keras.models.Model(inputs=input_layer, outputs=output_layer)
+model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+```
 
 ### Autoencoder
 
-*A brief description mentioning the ML techniques used and explaining why you chose them. Present the parameters of your model and explain how you selected them (e.g., in the case of an ANN: topology, activation functions, number of layers, number of hidden neurones per layer, etc). Present the parameters of the learning algorithm and explain how you selected them. (1 page)*
+Our second model is the autoencoder. It uses three convolutional layers with decreasing filters (64, 32, 16).
+
+```python
+# Encoder
+input_img = keras.layers.Input(shape=(IMAGE_HEIGHT, IMAGE_WIDTH, 1)) # adapt this if using `channels_first` image data format
+
+x = keras.layers.Conv2D(64, (3, 3), activation='relu', padding='same')(input_img)
+x = keras.layers.MaxPooling2D((2, 2), padding='same')(x)
+x = keras.layers.Conv2D(32, (3, 3), activation='relu', padding='same')(x)
+x = keras.layers.MaxPooling2D((2, 2), padding='same')(x)
+x = keras.layers.Conv2D(16, (3, 3), activation='relu', padding='same')(x)
+encoded = keras.layers.MaxPooling2D((2, 2), padding='same', name='encoded_layer')(x)
+
+# Decoder
+x = keras.layers.Conv2D(16, (3, 3), activation='relu', padding='same')(encoded)
+x = keras.layers.UpSampling2D((2, 2))(x)
+x = keras.layers.Conv2D(32, (3, 3), activation='relu', padding='same')(x)
+x = keras.layers.UpSampling2D((2, 2))(x)
+x = keras.layers.Conv2D(64, (3, 3), activation='relu', padding='same')(x)
+x = keras.layers.UpSampling2D((2, 2))(x)
+decoded = keras.layers.Conv2D(1, (3, 3), activation='sigmoid', padding='same')(x)
+
+# Autoencoder model
+autoencoder = keras.Model(input_img, decoded)
+autoencoder.compile(optimizer='adam', loss='mean_squared_error')
+encoder_model = keras.Model(inputs=autoencoder.input, outputs=autoencoder.get_layer('encoded_layer').output)
+```
+
+### K-fold
+
+To ensure the reliability of our results, we decided to use a k-fold cross validation. This method is used to validate the model's performance on unseen data. It is particularly useful as our dataset is relatively small, as it allows us to use all the data for training and testing.
+
+We used a k-fold cross validation to train our models. We split the dataset into 5 folds, then train the model on 4 folds and test it on the remaining one.
+
+```python
+kf = KFold(n_splits=5, shuffle=True, random_state=42)
+```
 
 ## 5. Experiments and results
 
