@@ -52,10 +52,8 @@ Below is an example of a processed image, following by some output image example
 
 ### OCR CNN
 
-Unfortunately, PaddleOCR is unable to differentiate between handwritten and typed text. In order to automate this task, one possibility is to create another model to detect handwriting from non-handwriting on an image. 
-An initial implementation of a CNN model has been carried out, but as it did not perform satisfactorily (f1-score between 0.5 and 0.6), it was decided to carry out this part by hand in order to concentrate fully on the project's main objective. So, while we can use OCR to identify and extract text from images, it is then necessary to manually sort processed images containing handwritten or non-handwritten text. 
-
-
+Unfortunately, PaddleOCR is unable to differentiate between handwritten and typed text. In order to automate this task, one possibility is to create another model to detect handwriting from non-handwriting on an image.
+An initial implementation of a CNN model has been carried out, but as it did not perform satisfactorily (f1-score between 0.5 and 0.6), it was decided to carry out this part by hand in order to concentrate fully on the project's main objective. So, while we can use OCR to identify and extract text from images, it is then necessary to manually sort processed images containing handwritten or non-handwritten text.
 
 ### Data pre-processing & augmentation
 
@@ -65,13 +63,20 @@ We then augmented the dataset by altering the images in various ways via the ker
 
 ## 4. Machine Learning Techniques
 
-We decided to have two different approaches to this problem: one using a CNN and one using an autoencoder.
+We decided to have two different approaches to this problem:
+
+- A supervised CNN, trained to recognise the written author ;
+- A unsupervices autoencoder, trained to reproduce the writting.
+
+Post-training, the models serves to extract features from the dataset. These features, representative of the input data in a compressed form, are visualized using Uniform Manifold Approximation and Projection (UMAP). UMAP is a dimensionality reduction technique that helps in visualizing clusters or patterns in high-dimensional data. In our case, it's instrumental in demonstrating how distinct classes of handwriting are represented in the latent space. Hopefully, the latent space (or compressed space in the CNN).
+We project the selected featured in a 2d plane.
 
 ### CNN
 
 Our model started with a simple architecture with just some layers, just engough to do some first tests. We decided to improve it by using a dual-path structure with different filter sizes (3x3 and 5x5), enabling it to capture diverse features.
 
-We try to avoid overfitting throug L1/L2 regularization layers. After our max pooling layers, we merge the two paths then add dense and dropout layer with a value of 0.2.
+We try to avoid overfitting throug L2 regularization.
+After our max pooling layers, we merge the two paths then add dense and dropout layer with a value of 0.2 to avoid overfitting.
 
 ```python
 # Define modele
@@ -104,6 +109,10 @@ model = keras.models.Model(inputs=input_layer, outputs=output_layer)
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 ```
 
+After the merge of the paths, we use a flattened layer in the UMAP, with the named layer 'flattened'
+
+The model employs categorical cross-entropy as its loss function, which is standard for multi-class classification problems. This loss function measures the difference between the actual and predicted probability distributions, effectively guiding the model towards accurate classifications. The model uses the Adam optimizer, a popular choice for deep learning models due to its efficiency and adaptive learning rate capabilities.
+
 ### Autoencoder
 
 Our second model is the autoencoder. It uses three convolutional layers with decreasing filters (64, 32, 16).
@@ -131,14 +140,21 @@ decoded = keras.layers.Conv2D(1, (3, 3), activation='sigmoid', padding='same')(x
 # Autoencoder model
 autoencoder = keras.Model(input_img, decoded)
 autoencoder.compile(optimizer='adam', loss='mean_squared_error')
+```
+
+We then use the latent space in the UMAP with the named layer "encoded_layer" :
+
+```python
 encoder_model = keras.Model(inputs=autoencoder.input, outputs=autoencoder.get_layer('encoded_layer').output)
 ```
 
+This model uses the mean squared error (MSE) as loss function.
+
 ### K-fold
 
-To ensure the reliability of our results, we decided to use a k-fold cross validation. This method is used to validate the model's performance on unseen data. It is particularly useful as our dataset is relatively small, as it allows us to use all the data for training and testing.
+To ensure the reliability of our results, we use a k-fold cross validation for both models (autoencoder and CNN). This method is used to validate the model's performance on unseen data. It is particularly useful as our dataset is relatively small, as it allows us to use all the data for training and testing.
 
-We used a k-fold cross validation to train our models. We split the dataset into 5 folds, then train the model on 4 folds and test it on the remaining one.
+We used a k-fold cross validation to train our models, splitting the data in 5 folds. This approach is essential for validating the model's performance across different subsets of data.
 
 ```python
 kf = KFold(n_splits=5, shuffle=True, random_state=42)
@@ -153,36 +169,35 @@ kf = KFold(n_splits=5, shuffle=True, random_state=42)
 For the training part, we used a UMAP to reduce the dimensionalities so that we could visualize the data on a two-dimensional plane. This display then allows us to visualize the distinct separation of classes by the model. We also implemented cross-validation (using a k-fold) to obtain a robust and stable evaluation and divided the dataset into 5 folds.
 
 Here we can see the result of the UMAP display at the end of the fifth fold. We first tested two classes containing data from the public dataset only, and the model was able to distinguish and separate the two classes correctly.
-We then added two more classes containing data from the Neuchatel dataset, for a total of 4 classes tested. We can see that the model separates two classes very well, but has more difficulty for the remaining two classes (which tend to form a more dispersed and splintered group of points). We believe that the 2 well-separated classes are those of the public dataset, while the other 2 classes belong to the neuchatel dataset. 
+We then added two more classes containing data from the Neuchatel dataset, for a total of 4 classes tested. We can see that the model separates two classes very well, but has more difficulty for the remaining two classes (which tend to form a more dispersed and splintered group of points). We believe that the 2 well-separated classes are those of the public dataset, while the other 2 classes belong to the neuchatel dataset.
 
 ![umap_train_fold5](assets/cnn_umap_train_fold5.png)
 
 #### Test part
 
 For the test part, we used a UMAP to evaluate the model's ability to predict on new data. We tested this by randomly comparing two of the 4 botanists (those with the most samples) and an 'Others' class containing samples from the remaining botanists (those without enough samples to form a class in their own right).
-We can see that, in contrast to training, performance is poorer when the model only uses data from the Neuchatel dataset. The model seems to succeed slightly in separating the 2 classes, but in a very dispersed manner, without succeeding in establishing clear clusters. 
+We can see that, in contrast to training, performance is poorer when the model only uses data from the Neuchatel dataset. The model seems to succeed slightly in separating the 2 classes, but in a very dispersed manner, without succeeding in establishing clear clusters.
 
 ![umap_test](assets/cnn_umap_test.png)
 
-It is also possible to view the predicted classes with a confusion matrix, and here we see results correlated with the UMAP. The predictions are more or less 50/50, with an average f1-score of 0.5-0.6. 
+It is also possible to view the predicted classes with a confusion matrix, and here we see results correlated with the UMAP. The predictions are more or less 50/50, with an average f1-score of 0.5-0.6.
 
 <img src="assets/cnn_confusion_matrix_test.png" alt="cnn_confusion_matrix_test" style="zoom: 50%;" />
 
 ### Autoencoder experiments
 
-The results of the autoencoder approach are similar to those obtained with the CNN model. There is therefore no distinct improvement or degradation compared with the other approach. 
+The results of the autoencoder approach are similar to those obtained with the CNN model. There is therefore no distinct improvement or degradation compared with the other approach.
 
-
-
-## 6. Analyse et conclusions
+## 6. Analysis and conclusions
 
 The main objective of this project was to create a classification model to recognise and group botanists' handwriting types from an image.
 First of all, we were able to automate some of the data extraction using OCR. Although we had tried to create another CNN model to recognise handwritten text from non-handwritten text, we decided to do this step manually in order to concentrate on the main model.
 
-We considered two approaches to creating the main model, using a CNN or an auto-encoder. In terms of performance, the 2 solutions are relatively similar, with the training stage showing very good results with data from the public dataset, whereas the model seems to have difficulty differentiating data from the Neuchatel dataset. Performance is less satisfactory when we test the model with new data. The model has difficulty recognising classes, and although the UMAP display shows a separation, it remains very scattered and does not produce clusters as accurately as we would like. 
+We considered two approaches to creating the main model, using a CNN or an auto-encoder. In terms of performance, the 2 solutions are relatively similar, with the training stage showing very good results with data from the public dataset, whereas the model seems to have difficulty differentiating data from the Neuchatel dataset. Performance is less satisfactory when we test the model with new data. The model has difficulty recognising classes, and although the UMAP display shows a separation, it remains very scattered and does not produce clusters as accurately as we would like.
 
 This can be explained by the fact that the botanists' handwriting in this dataset is very similar indeed, and it is very difficult even with the naked eye to differentiate one handwriting from another. In order to improve the performance of this model, the following points should be considered:
-* Increase the number of samples in the Neuchatel dataset, as some botanists only have 2-3 samples. It should be possible to collect more data.
-* Use fine tuning on the training model to adjust certain parameters so that it is better adapted to the type of data in the Neuchatel dataset.
 
-The solution developed as part of this project achieves very good results in classifying types of postings to the public dataset. However, it needs to be improved if it is to be fully effective on the writings of the botanists at Neuchatel. 
+- Increase the number of samples in the Neuchatel dataset, as some botanists only have 2-3 samples. It should be possible to collect more data.
+- Use fine tuning on the training model to adjust certain parameters so that it is better adapted to the type of data in the Neuchatel dataset.
+
+The solution developed as part of this project achieves very good results in classifying types of postings to the public dataset. However, it needs to be improved if it is to be fully effective on the writings of the botanists at Neuchatel.
