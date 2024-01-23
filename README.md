@@ -169,7 +169,7 @@ kf = KFold(n_splits=5, shuffle=True, random_state=42)
 For the training part, we used a UMAP to reduce the dimensionalities so that we could visualize the data on a two-dimensional plane. This display then allows us to visualize the distinct separation of classes by the model. We also implemented cross-validation (using a k-fold) to obtain a robust and stable evaluation and divided the dataset into 5 folds.
 
 Here we can see the result of the UMAP display at the end of the fifth fold. We first tested two classes containing data from the public dataset only, and the model was able to distinguish and separate the two classes correctly.
-We then added two more classes containing data from the Neuchatel dataset, for a total of 4 classes tested. We can see that the model separates two classes very well, but has more difficulty for the remaining two classes (which tend to form a more dispersed and splintered group of points). We believe that the 2 well-separated classes are those of the public dataset, while the other 2 classes belong to the neuchatel dataset.
+We then added two more classes containing data from the Neuchâtel dataset, for a total of 4 classes tested. We can see that the model separates two classes very well, but has more difficulty for the remaining two classes (which tend to form a more dispersed and splintered group of points). We believe that the 2 well-separated classes are those of the public dataset, while the other 2 classes belong to the neuchatel dataset.
 
 ![umap_train_fold5](assets/cnn_umap_train_fold5.png)
 
@@ -184,12 +184,21 @@ It is also possible to view the predicted classes with a confusion matrix, and h
 
 <img src="assets/cnn_confusion_matrix_test.png" alt="cnn_confusion_matrix_test" style="zoom: 50%;" />
 
+
+
 ### Autoencoder experiments
 
-For the autoencoder, we also use a UMAP to reduce the dimensions in order to visualize the data on a two-dimensional plane.
-The use of data here is similar to that of the CNN, using 2 classes from the public database and 2 classes from the Neuchâtel database.
+For the autoencoder, we also use a UMAP to reduce the dimensions in order to visualize the data on a two-dimensional plane. The use of data here is similar to that of the CNN, using 2 classes from the public database and 2 classes from the Neuchâtel database.
 
-It can be seen that performance is lower than with CNN. Clusters have difficulty forming and classes are scattered on the 2D plane. While the CNN model showed good performance in separating public dataset classes, the autoencoder seems to have trouble separating both public dataset classes and Neuchatel dataset classes.
+It can be seen that performance is lower than with CNN. Clusters have difficulty forming and classes are scattered on the 2D plane. While the CNN model showed good performance in separating public dataset classes, the autoencoder seems to have trouble separating both public dataset classes and Neuchâtel dataset classes.
+
+#### Train part
+
+![ae_umap_test](assets/ae_umap_train.png)
+
+#### Test part
+
+Since training does not produce satisfactory results, the test shows that performance does not improve. 
 
 ![ae_umap_test](assets/ae_umap_test.png)
 
@@ -202,9 +211,9 @@ First of all, we were able to automate some of the data extraction using OCR. Al
 
 We considered two approaches to creating the main model, using a CNN or an auto-encoder. In terms of performance, the CNN is superior to the auto-encoder, showing very good results with data from the public dataset, but having difficulty differentiating data from the Neuchâtel dataset. The autoencoder did not perform satisfactorily overall. The CNN's performance is less satisfactory when we test the model with new data. The model has difficulty recognizing classes, and although the UMAP display shows separation, this is still very scattered and does not produce clusters as accurately as we would like.
 
-This can be explained by the fact that the samples in the Neuchatel dataset are very similar, and it is very difficult, even with the naked eye, to differentiate one entry from another. To improve the performance of this model, the following points should be considered:
+This can be explained by the fact that the samples in the Neuchâtel dataset are very similar, and it is very difficult, even with the naked eye, to differentiate one entry from another. To improve the performance of this model, the following points should be considered:
 
 - Increase the number of samples in the Neuchâtel dataset, as some botanists only have 2 or 3 samples. It should be possible to collect more data.
-- Use fine tuning on the training model to adjust certain parameters so that it is better adapted to the type of data in the Neuchâtel dataset.
+- Find a suitable model and use the fine-tuning of the training model to adjust certain parameters so that it is better suited to the type of data in the Neuchâtel dataset.
 
 The solution developed as part of this project has achieved very good results in classifying publication types in the public dataset. However, it needs to be improved if it is to be fully effective on the writings of Neuchâtel botanists.
