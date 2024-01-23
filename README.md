@@ -10,10 +10,6 @@
 
 ---
 
-[TOC]
-
----
-
 ## 1. Context
 
 The University of Neuchatel maintains an extensive collection of handwritten documents, primarily composed of field notes from botanists. The objective of this project is to develop a machine learning model capable of accurately identifying the authorship of these notes based on unique handwriting characteristics.
@@ -28,9 +24,10 @@ The second dataset, known as the Neuchâtel dataset, consists of scanned documen
 
 Below are two typical image examples from the Neuchâtel dataset:
 
-<img src="assets/data-neuchatel-1.png" alt="Alt text" style="zoom: 33%;" />
+| <img src="assets/data-neuchatel-1.png" alt="Alt text" style="zoom: 33%;" /> | <img src="assets/data-neuchatel-2.png" alt="Alt text" style="zoom: 33%;" /> |
+|:----------------------------------------------------------:|:----------------------------------------------------------:|
 
-<img src="assets/data-neuchatel-2.png" alt="Alt text" style="zoom: 33%;" />
+
 
 ## 3. Data pre-processing & feature extraction
 
@@ -167,18 +164,18 @@ For the training part, we used a UMAP to reduce the dimensionalities so that we 
 Here we can see the result of the UMAP display at the end of the fifth fold. We first tested two classes containing data from the public dataset only, and the model was able to distinguish and separate the two classes correctly.
 We then added two more classes containing data from the Neuchâtel dataset, for a total of 4 classes tested. We can see that the model separates two classes very well, but has more difficulty for the remaining two classes (which tend to form a more dispersed and splintered group of points). We believe that the 2 well-separated classes are those of the public dataset, while the other 2 classes belong to the neuchatel dataset.
 
-![umap_train_fold5](assets/cnn_umap_train_fold5.png)
+<img src="assets/cnn_umap_train_fold5.png" alt="umap_train_fold5" style="zoom: 25%;" />
 
 **Test part**
 
 For the test part, we used a UMAP to evaluate the model's ability to predict on new data. We tested this by randomly comparing two of the 4 botanists (those with the most samples) and an 'Others' class containing samples from the remaining botanists (those without enough samples to form a class in their own right).
 We can see that, in contrast to training, performance is poorer when the model only uses data from the Neuchatel dataset. The model seems to succeed slightly in separating the 2 classes, but in a very dispersed manner, without succeeding in establishing clear clusters.
 
-![umap_test](assets/cnn_umap_test.png)
+<img src="assets/cnn_umap_test.png" alt="umap_test" style="zoom: 25%;" />
 
 It is also possible to view the predicted classes with a confusion matrix, and here we see results correlated with the UMAP. The predictions are more or less 50/50, with an average f1-score of 0.5-0.6.
 
-<img src="assets/cnn_confusion_matrix_test.png" alt="cnn_confusion_matrix_test" style="zoom: 50%;" />
+<img src="assets/cnn_confusion_matrix_test.png" alt="cnn_confusion_matrix_test" style="zoom: 33%;" />
 
 
 
@@ -190,13 +187,13 @@ It can be seen that performance is lower than with CNN. Clusters have difficulty
 
 **Train part**
 
-![ae_umap_test](assets/ae_umap_train.png)
+<img src="assets/ae_umap_train.png" alt="ae_umap_test" style="zoom: 25%;" />
 
 **Test part**
 
 Since training does not produce satisfactory results, the test shows that performance does not improve. 
 
-![ae_umap_test](assets/ae_umap_test.png)
+<img src="assets/ae_umap_test.png" alt="ae_umap_test" style="zoom: 25%;" />
 
 
 
