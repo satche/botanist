@@ -186,18 +186,25 @@ It is also possible to view the predicted classes with a confusion matrix, and h
 
 ### Autoencoder experiments
 
-The results of the autoencoder approach are similar to those obtained with the CNN model. There is therefore no distinct improvement or degradation compared with the other approach.
+For the autoencoder, we also use a UMAP to reduce the dimensions in order to visualize the data on a two-dimensional plane.
+The use of data here is similar to that of the CNN, using 2 classes from the public database and 2 classes from the Neuchâtel database.
+
+It can be seen that performance is lower than with CNN. Clusters have difficulty forming and classes are scattered on the 2D plane. While the CNN model showed good performance in separating public dataset classes, the autoencoder seems to have trouble separating both public dataset classes and Neuchatel dataset classes.
+
+![ae_umap_test](assets/ae_umap_test.png)
+
+
 
 ## 6. Analysis and conclusions
 
 The main objective of this project was to create a classification model to recognise and group botanists' handwriting types from an image.
 First of all, we were able to automate some of the data extraction using OCR. Although we had tried to create another CNN model to recognise handwritten text from non-handwritten text, we decided to do this step manually in order to concentrate on the main model.
 
-We considered two approaches to creating the main model, using a CNN or an auto-encoder. In terms of performance, the 2 solutions are relatively similar, with the training stage showing very good results with data from the public dataset, whereas the model seems to have difficulty differentiating data from the Neuchatel dataset. Performance is less satisfactory when we test the model with new data. The model has difficulty recognising classes, and although the UMAP display shows a separation, it remains very scattered and does not produce clusters as accurately as we would like.
+We considered two approaches to creating the main model, using a CNN or an auto-encoder. In terms of performance, the CNN is superior to the auto-encoder, showing very good results with data from the public dataset, but having difficulty differentiating data from the Neuchâtel dataset. The autoencoder did not perform satisfactorily overall. The CNN's performance is less satisfactory when we test the model with new data. The model has difficulty recognizing classes, and although the UMAP display shows separation, this is still very scattered and does not produce clusters as accurately as we would like.
 
-This can be explained by the fact that the botanists' handwriting in this dataset is very similar indeed, and it is very difficult even with the naked eye to differentiate one handwriting from another. In order to improve the performance of this model, the following points should be considered:
+This can be explained by the fact that the samples in the Neuchatel dataset are very similar, and it is very difficult, even with the naked eye, to differentiate one entry from another. To improve the performance of this model, the following points should be considered:
 
-- Increase the number of samples in the Neuchatel dataset, as some botanists only have 2-3 samples. It should be possible to collect more data.
-- Use fine tuning on the training model to adjust certain parameters so that it is better adapted to the type of data in the Neuchatel dataset.
+- Increase the number of samples in the Neuchâtel dataset, as some botanists only have 2 or 3 samples. It should be possible to collect more data.
+- Use fine tuning on the training model to adjust certain parameters so that it is better adapted to the type of data in the Neuchâtel dataset.
 
-The solution developed as part of this project achieves very good results in classifying types of postings to the public dataset. However, it needs to be improved if it is to be fully effective on the writings of the botanists at Neuchatel.
+The solution developed as part of this project has achieved very good results in classifying publication types in the public dataset. However, it needs to be improved if it is to be fully effective on the writings of Neuchâtel botanists.
