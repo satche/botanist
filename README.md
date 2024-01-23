@@ -14,10 +14,6 @@
 
 ---
 
-TODO:
-
-- Présentation : Tous (<https://docs.google.com/presentation/d/1UJyt7ywg6fFq_mlWROCbzvzzPN0oVw38ch_AZ46q7xQ/edit?usp=sharing>)
-
 ## 1. Context
 
 The University of Neuchatel maintains an extensive collection of handwritten documents, primarily composed of field notes from botanists. The objective of this project is to develop a machine learning model capable of accurately identifying the authorship of these notes based on unique handwriting characteristics.
@@ -32,9 +28,9 @@ The second dataset, known as the Neuchâtel dataset, consists of scanned documen
 
 Below are two typical image examples from the Neuchâtel dataset:
 
-<img src="assets/data-neuchatel-1.png" alt="Alt text" style="zoom:50%;" />
+<img src="assets/data-neuchatel-1.png" alt="Alt text" style="zoom: 33%;" />
 
-<img src="assets/data-neuchatel-2.png" alt="Alt text" style="zoom: 50%;" />
+<img src="assets/data-neuchatel-2.png" alt="Alt text" style="zoom: 33%;" />
 
 ## 3. Data pre-processing & feature extraction
 
@@ -48,7 +44,7 @@ While this could be done manually, we have opted for a more academic approach. W
 
 Below is an example of a processed image, following by some output image examples.
 
-![Alt text](<assets/process.png>)
+<img src="assets/process.png" alt="Alt text" style="zoom: 33%;" />
 
 ### OCR CNN
 
@@ -164,7 +160,7 @@ kf = KFold(n_splits=5, shuffle=True, random_state=42)
 
 ### CNN experiments
 
-#### Train part
+**Train part**
 
 For the training part, we used a UMAP to reduce the dimensionalities so that we could visualize the data on a two-dimensional plane. This display then allows us to visualize the distinct separation of classes by the model. We also implemented cross-validation (using a k-fold) to obtain a robust and stable evaluation and divided the dataset into 5 folds.
 
@@ -173,7 +169,7 @@ We then added two more classes containing data from the Neuchâtel dataset, for 
 
 ![umap_train_fold5](assets/cnn_umap_train_fold5.png)
 
-#### Test part
+**Test part**
 
 For the test part, we used a UMAP to evaluate the model's ability to predict on new data. We tested this by randomly comparing two of the 4 botanists (those with the most samples) and an 'Others' class containing samples from the remaining botanists (those without enough samples to form a class in their own right).
 We can see that, in contrast to training, performance is poorer when the model only uses data from the Neuchatel dataset. The model seems to succeed slightly in separating the 2 classes, but in a very dispersed manner, without succeeding in establishing clear clusters.
@@ -192,11 +188,11 @@ For the autoencoder, we also use a UMAP to reduce the dimensions in order to vis
 
 It can be seen that performance is lower than with CNN. Clusters have difficulty forming and classes are scattered on the 2D plane. While the CNN model showed good performance in separating public dataset classes, the autoencoder seems to have trouble separating both public dataset classes and Neuchâtel dataset classes.
 
-#### Train part
+**Train part**
 
 ![ae_umap_test](assets/ae_umap_train.png)
 
-#### Test part
+**Test part**
 
 Since training does not produce satisfactory results, the test shows that performance does not improve. 
 
